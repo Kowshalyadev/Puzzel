@@ -1,0 +1,203 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Puzzle Game</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #2298a3;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            margin: auto;
+            width: 80%;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            gap: 5px;
+            margin: 20px auto;
+            color: black;
+        }
+        .tile {
+            width: 100px;
+            height: 100px;
+            border: 1px solid white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            background-color: antiquewhite;
+            border-radius: 12px;
+        }
+        .empty {
+            background-color: transparent;
+            cursor: default;
+        }
+        .victory-message, .game-over-message {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        #timer {
+            font-size: 24px;
+            margin: 10px 0;
+            color: yellow;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Number Puzzle Game</h1>
+        <p id="timer">Time: 300s</p>
+        <div class="grid" id="grid"></div>
+        <button class="btn btn-primary" id="reset">Reset Game</button>
+        <div class="victory-message" id="victoryMessage">
+            <h2>Congratulations!</h2>
+            <p>You solved the puzzle!</p>
+            <p>Your time: <span id="finalTime"></span></p>
+            <button class="btn btn-success" id="newGame">New Game</button>
+        </div>
+        <div class="game-over-message" id="gameOverMessage">
+            <h2>Game Over!</h2>
+            <p>Time's up! You couldn't solve the puzzle in time.</p>
+            <button class="btn btn-danger" id="restartGame">Restart Game</button>
+        </div>
+    </div>
+
+    <script>
+        const gridElement = document.getElementById('grid');
+        const resetButton = document.getElementById('reset');
+        const victoryMessage = document.getElementById('victoryMessage');
+        const finalTimeDisplay = document.getElementById('finalTime');
+        const newGameButton = document.getElementById('newGame');
+        const gameOverMessage = document.getElementById('gameOverMessage');
+        const restartGameButton = document.getElementById('restartGame');
+        const timerDisplay = document.getElementById('timer');
+
+        let gridSize = 4; // Default grid size (4x4)
+        let tiles = [];
+        let timerInterval;
+        let remainingTime = 300; // 5 minutes in seconds
+
+        // Initialize the game
+        function initializeGame() {
+            tiles = Array.from(Array(gridSize * gridSize).keys());
+            shuffleTiles();
+            renderGrid();
+            resetTimer();
+        }
+
+        // Shuffle the tiles
+        function shuffleTiles() {
+            for (let i = tiles.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
+            }
+            if (!isSolvable(tiles)) {
+                shuffleTiles(); // Ensure the puzzle is solvable
+            }
+        }
+
+        // Check if the puzzle is solvable
+        function isSolvable(tiles) {
+            let inversions = 0;
+            for (let i = 0; i < tiles.length; i++) {
+                for (let j = i + 1; j < tiles.length; j++) {
+                    if (tiles[i] > tiles[j] && tiles[i] !== 0 && tiles[j] !== 0) {
+                        inversions++;
+                    }
+                }
+            }
+            return inversions % 2 === 0; // Check for even number of inversions
+        }
+
+        // Render the grid
+        function renderGrid() {
+            gridElement.innerHTML = ''; // Clear previous tiles
+            tiles.forEach((tile, index) => {
+                const tileElement = document.createElement('div');
+                tileElement.className = `tile ${tile === 0 ? 'empty' : ''}`;
+                tileElement.textContent = tile === 0 ? '' : tile; // Show number or empty
+                tileElement.dataset.index = index; // Store index
+                tileElement.addEventListener('click', () => handleTileClick(index));
+                gridElement.appendChild(tileElement);
+            });
+        }
+
+        // Handle tile clicks
+        function handleTileClick(index) {
+            const emptyIndex = tiles.indexOf(0); // Find empty tile index
+            if (isValidMove(index, emptyIndex)) {
+                [tiles[index], tiles[emptyIndex]] = [tiles[emptyIndex], tiles[index]]; // Swap tiles
+                renderGrid(); // Re-render grid
+                checkVictory(); // Check for victory
+            }
+        }
+
+        // Check if the move is valid
+        function isValidMove(index, emptyIndex) {
+            const validMoves = [emptyIndex - 1, emptyIndex + 1, emptyIndex - gridSize, emptyIndex + gridSize];
+            return validMoves.includes(index);
+        }
+
+        // Check for victory
+        function checkVictory() {
+            if (tiles.slice(0, -1).every((tile, index) => tile === index + 1)) {
+                clearInterval(timerInterval); // Stop timer
+                victoryMessage.style.display = 'block'; // Show victory message
+                finalTimeDisplay.textContent = (300 - remainingTime) + " seconds"; // Show time taken
+            }
+        }
+
+        // Reset the game
+        resetButton.addEventListener('click', initializeGame);
+
+        // Start a new game after victory
+        newGameButton.addEventListener('click', () => {
+            victoryMessage.style.display = 'none'; // Hide victory message
+            initializeGame(); // Start a new game
+        });
+
+        // Restart the game after Game Over
+        restartGameButton.addEventListener('click', () => {
+            gameOverMessage.style.display = 'none'; // Hide Game Over message
+            initializeGame(); // Start a new game
+        });
+
+        // Timer function
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                remainingTime--;
+                timerDisplay.textContent = `Time: ${remainingTime}s`;
+                if (remainingTime <= 0) {
+                    clearInterval(timerInterval);
+                    gameOverMessage.style.display = 'block'; // Show Game Over message
+                }
+            }, 1000);
+        }
+
+        // Reset timer
+        function resetTimer() {
+            clearInterval(timerInterval); // Clear existing timer
+            remainingTime = 5000; // Reset time to 300 seconds
+            timerDisplay.textContent = `Time: ${remainingTime}s`; // Display reset time
+            startTimer(); // Start new timer
+        }
+
+        // Start the game on initial load
+        window.onload = initializeGame;
+    </script>
+</body>
+</html>
