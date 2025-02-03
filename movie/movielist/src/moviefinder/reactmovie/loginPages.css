@@ -1,0 +1,197 @@
+/* General body styling */
+body {
+    font-family: 'Poppins', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #ff7eb3, #ff758c, #ffa07a, #ffdf65);
+    background-size: 400% 400%;
+    animation: gradientBG 10s ease infinite;
+    color: #ffffff;
+    overflow: hidden;
+}
+
+/* Animated gradient background */
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Semi-transparent overlay effect */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    z-index: -1;
+}
+
+h1 {
+    text-align: center;
+    color: #ffffff;
+    margin-bottom: 20px;
+    font-size: 36px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    animation: bounceIn 1s ease-in-out;
+}
+
+/* Bouncing heading animation */
+@keyframes bounceIn {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+form {
+    background: linear-gradient(135deg, #ffffff, #ffe4f0);
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+    width: 320px;
+    animation: fadeIn 1s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Form fade-in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+form input {
+    display: block;
+    width: calc(100% - 20px);
+    margin: 10px auto;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 228, 240, 0.3); /* More transparent background */
+    color: #555;
+    transition: all 0.3s ease;
+}
+
+/* Input hover and focus effects */
+form input:hover {
+    background: rgba(255, 255, 255, 0.6); /* Slightly less transparent on hover */
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
+
+form input:focus {
+    border: 2px solid #ff758c;
+    outline: none;
+    box-shadow: 0 0 10px rgba(255, 117, 140, 0.5);
+    background: #ffffff;
+}
+
+/* Button ripple effect container */
+form button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    font-size: 18px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Ripple animation */
+form button::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    opacity: 1;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    transition: all 0.6s ease-out;
+}
+
+form button:active::after {
+    width: 200%;
+    height: 200%;
+    opacity: 0;
+}
+
+/* Button hover effects */
+form button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(255, 117, 140, 0.5);
+    background: linear-gradient(135deg, #ff6580, #ff758c);
+}
+
+/* Media Query for smaller screens */
+@media (max-width: 768px) {
+    form {
+        width: 90%;
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    form input {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    form button {
+        font-size: 16px;
+        padding: 10px;
+    }
+}
+
+/* Media Query for very small screens */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 22px;
+        margin-bottom: 15px;
+    }
+
+    form {
+        padding: 15px;
+    }
+
+    form input,
+    form button {
+        font-size: 12px;
+        padding: 8px;
+    }
+}

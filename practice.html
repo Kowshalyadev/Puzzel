@@ -7,6 +7,28 @@
 </head>
 <body>
     <script>
+        
+        async function fetchMainActors() {
+    const url = 'https://moviesdatabase.p.rapidapi.com/titles/tt1375666/main_actors';
+    const options = {
+        method: 'GET',
+        headers: {
+            'x-rapidapi-key': 'd8348a3f0dmshaff60b54df404b1p1f331fjsn26db868882b9',
+            'x-rapidapi-host': 'moviesdatabase.p.rapidapi.com'
+        }
+    };
+
+    try {
+        const response = await fetch(url, options);
+        const result = await response;
+        console.log(result.url);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+fetchMainActors();
+
         // let count=0
         // let clear=setTimeout(() => {
         //     console.log(count)
